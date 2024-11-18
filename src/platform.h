@@ -1303,7 +1303,8 @@ extern int NTHREADS;
 // Nov 2020: Under MacOS, use of sysctlbyname call in util.c::print_host_info needs this moved outside #ifdef USE_THREADS.
 // Feb 2021: Under Linux, per this [url=https://github.com/open5gs/open5gs/issues/600]Github discussion[/url],
 // "sysctl() is deprecated and may break build with glibc >= 2.30", so add an appropriate GLIBC-version clause:
-#if defined(OS_TYPE_MACOSX) || !defined(OS_TYPE_GNU_HURD) && !defined(__MINGW32__) && ((__GLIBC__ < 2) || (__GLIBC_MINOR__ < 30))
+// Nov 2024: Android uses Bionic, sys/sysctl.h doesn't exist.
+#if defined(OS_TYPE_MACOSX) || !defined(OS_TYPE_GNU_HURD) && !defined(__MINGW32__) && !defined(__ANDROID__) && ((__GLIBC__ < 2) || (__GLIBC_MINOR__ < 30))
   #ifdef OS_TYPE_LINUX
 	#warning GLIBC either not defined or version < 2.30 ... including <sys/sysctl.h> header.
   #endif
@@ -1377,7 +1378,9 @@ extern int NTHREADS;
 
 		#include <pthread.h>
 		// Found pthread header?
-		#if(defined(_PTHREAD_H) || defined(_PTHREAD_H_) || defined(WIN_PTHREADS_H))	// Apr 2018: Thanks to Elias Mariani for the OpenBSD mods
+		// Apr 2018: Thanks to Elias Mariani for the OpenBSD mods
+		// Nov 2024: Android's pthread.h uses "#pragma once" instead of #include guards
+		#if(defined(_PTHREAD_H) || defined(_PTHREAD_H_) || defined(WIN_PTHREADS_H) || defined(__ANDROID__))
 			#define MULTITHREAD
 			#define USE_PTHREAD
 		#else
