@@ -196,6 +196,7 @@ The scratch array (2nd input argument) is only needed for data table initializat
 	const double one_half[3] = {1.0, 0.5, 0.25};		/* Needed for small-weights-tables scheme */
 	static double base[2],baseinv[2],radix_inv;
 	static struct complex *rt0 = 0x0, *rt1 = 0x0, *rt0_ptmp = 0x0, *rt1_ptmp = 0x0;		/* reduced-size roots of unity arrays	*/
+	printf("DEBUG: mers_mod_square.c, allocating wt0\n");
 	static double *wt0 = 0x0, *wt1 = 0x0, *tmp = 0x0, *wt0_ptmp = 0x0, *wt1_ptmp = 0x0, *tmp_ptmp = 0x0;		/* reduced-size DWT weights arrays	*/
 	double fracmax,wt,wtinv;
 	double max_fp = 0.0, frac_fp, atmp;

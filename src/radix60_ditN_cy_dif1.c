@@ -158,6 +158,12 @@
 
 int radix60_ditN_cy_dif1(double a[], int n, int nwt, int nwt_bits, double wt0[], double wt1[], int si[], struct complex rn0[], struct complex rn1[], double base[], double baseinv[], int iter, double *fracmax, uint64 p)
 {
+	printf("----------\n");
+	printf("DEBUG: radix60_ditN_cy_dif1() called with:\n");
+	printf("DEBUG: wt0 = %" PRIx64 "\n", (uint64) wt0);
+	printf("DEBUG: wt1 = %" PRIx64 "\n", (uint64) wt1);
+	printf("DEBUG:  si = %" PRIx64 "\n", (uint64) si);
+	printf("----------\n");
 /*
 !...Acronym: DWT = Discrete Weighted Transform, DIT = Decimation In Time, DIF = Decimation In Frequency
 !
@@ -429,8 +435,10 @@ int radix60_ditN_cy_dif1(double a[], int n, int nwt, int nwt_bits, double wt0[],
 
 /*...initialize things upon first entry: */
 
+	printf("DEBUG LOCATION0: first_entry = %d\n", first_entry);
 	if(first_entry)
 	{
+		printf("DEBUG LOCATION0: WE ARE HERE...\n");
 		psave = p;	nsave = n;
 		radix_inv = qfdbl(qf_rational_quotient((int64)1, (int64)RADIX));
 		n2inv     = qfdbl(qf_rational_quotient((int64)1, (int64)(n/2)));
@@ -523,9 +531,11 @@ int radix60_ditN_cy_dif1(double a[], int n, int nwt, int nwt_bits, double wt0[],
 	#endif
 
 	#ifdef USE_PTHREAD
+			printf("DEBUG LOCATION1: WE ARE HERE...\n");
 		/* Populate the elements of the thread-specific data structs which don't change after init: */
 		for(ithread = 0; ithread < CY_THREADS; ithread++)
 		{
+			printf("DEBUG LOCATION1: ithread = %d\n", ithread);
 			tdat[ithread].iter = iter;
 		// int data:
 			tdat[ithread].tid = ithread;
@@ -543,6 +553,9 @@ int radix60_ditN_cy_dif1(double a[], int n, int nwt, int nwt_bits, double wt0[],
 			tdat[ithread].si  = si;
 			tdat[ithread].rn0 = rn0;
 			tdat[ithread].rn1 = rn1;
+
+			printf("DEBUG LOCATION1: tdat[ithread].wt0 = 0x%" PRIx64 "\n", (uint64) tdat[ithread].wt0);
+			printf("DEBUG LOCATION1:               wt0 = 0x%" PRIx64 "\n", (uint64) wt0);
 
 		// This array pointer must be set based on vec_dbl-sized alignment at runtime for each thread:
 			for(l = 0; l < RE_IM_STRIDE; l++) {
@@ -1778,6 +1791,17 @@ for(outer=0; outer <= 1; outer++)
 
 	// pointer data:
 		tdat[ithread].arrdat = a;			/* Main data array */
+		printf("DEBUG: ithread = %d\n", ithread);
+		printf("DEBUG: tdat[ithread].wt0 = 0x%" PRIx64 "\n", (uint64) tdat[ithread].wt0);
+		printf("DEBUG:               wt0 = 0x%" PRIx64 "\n", (uint64) wt0);
+		printf("DEBUG: tdat[ithread].wt1 = 0x%" PRIx64 "\n", (uint64) tdat[ithread].wt1);
+		printf("DEBUG:               wt1 = 0x%" PRIx64 "\n", (uint64) wt1);
+		printf("DEBUG: tdat[ithread].si  = 0x%" PRIx64 "\n", (uint64) tdat[ithread].si);
+		printf("DEBUG:               si  = 0x%" PRIx64 "\n", (uint64) si);
+		printf("DEBUG: tdat[ithread].rn0 = 0x%" PRIx64 "\n", (uint64) tdat[ithread].rn0);
+		printf("DEBUG:               rn0 = 0x%" PRIx64 "\n", (uint64) rn0);
+		printf("DEBUG: tdat[ithread].rn1 = 0x%" PRIx64 "\n", (uint64) tdat[ithread].rn1);
+		printf("DEBUG:               rn1 = 0x%" PRIx64 "\n", (uint64) rn1);
 		ASSERT(tdat[ithread].wt0 == wt0, "thread-local memcheck fail!");
 		ASSERT(tdat[ithread].wt1 == wt1, "thread-local memcheck fail!");
 		ASSERT(tdat[ithread].si  == si, "thread-local memcheck fail!");
